@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artisan Crispy Chili - Join the List!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #2c1810;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .hero {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,99,71,0.1), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(0%) translateY(0%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .chili-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #d63031;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #636e72;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .description {
+            background: linear-gradient(135deg, #fff9f5, #ffeaa7);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #e17055;
+        }
+        
+        .description h2 {
+            color: #d63031;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .description p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #2c1810;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature h3 {
+            color: #e17055;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, #d63031, #e17055);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(214, 48, 49, 0.3);
+        }
+        
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            opacity: 0.95;
+        }
+        
+        .signup-btn {
+            display: inline-block;
+            background: #fff;
+            color: #d63031;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .signup-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            color: #2c1810;
+        }
+        
+        .signup-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .signup-btn:hover::before {
+            left: 100%;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #636e72;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .testimonial {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            font-style: italic;
+            text-align: center;
+            border-left: 5px solid #00b894;
+        }
+        
+        .testimonial p {
+            font-size: 1.1rem;
+            color: #2c1810;
+            margin-bottom: 10px;
+        }
+        
+        .testimonial .author {
+            color: #636e72;
+            font-weight: bold;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .hero {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .description {
+                padding: 20px;
+            }
+            
+            .description h2 {
+                font-size: 1.5rem;
+            }
+            
+            .description p {
+                font-size: 1rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-section {
+                padding: 30px 20px;
+            }
+            
+            .cta-section h2 {
+                font-size: 1.7rem;
+            }
+            
+            .signup-btn {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .chili-icon {
+                font-size: 3rem;
+            }
+            
+            .feature-icon {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="chili-icon">🌶️</div>
+            <h1>Artisan Crispy Chili</h1>
+            <p class="subtitle">Handcrafted with Love, Perfected Through Passion</p>
+        </div>
+        
+        <div class="description">
+            <h2>🔥 The Story Behind the Heat</h2>
+            <p>What started as a kitchen experiment has become the talk of our friend group! Our homemade crispy chili has been months in the making, with each batch carefully crafted to achieve the perfect balance of crunch, flavor, and that unforgettable kick.</p>
+            <p>Made in small batches using traditional techniques and the finest ingredients, each jar represents hours of careful preparation and a passion for authentic, bold flavors that awaken your taste buds.</p>
+        </div>
+        
+        <div class="testimonial">
+            <p>"This is hands down the best crispy chili I've ever tasted! I've been putting it on everything – eggs, pasta, pizza. I need more!"</p>
+            <div class="author">- Sarah M., Friend & First Taster</div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🏠</div>
+                <h3>Homemade Quality</h3>
+                <p>Crafted in small batches with attention to every detail, ensuring consistent quality and flavor.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌶️</div>
+                <h3>Perfect Heat Level</h3>
+                <p>Carefully balanced spice that adds excitement without overwhelming your palate.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">✨</div>
+                <h3>Irresistible Crunch</h3>
+                <p>That satisfying crispy texture that makes every bite an experience to remember.</p>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h2>🔔 Join the Crispy Chili List!</h2>
+            <p>Be the first to know when our next batch is ready. Limited quantities available – our friends get first dibs!</p>
+            <a href="#" class="signup-btn" id="signupBtn">🌶️ Count Me In!</a>
+        </div>
+        
+        <div class="footer">
+            <p>Made with ❤️ in small batches • Perfect for food lovers who appreciate the extraordinary</p>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('signupBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Open the Google Form in a new tab
+            window.open('https://docs.google.com/forms/d/e/1FAIpQLScuabYX6fTFysMUfQug5SLCpqkYBySEVWlxb8MC_k4jzc3A8A/viewform?usp=dialog', '_blank');
+        });
+        
+        // Add some interactive sparkle effects
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() > 0.98) {
+                createSparkle(e.clientX, e.clientY);
+            }
+        });
+        
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.style.position = 'fixed';
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.fontSize = '20px';
+            sparkle.textContent = '✨';
+            sparkle.style.zIndex = '1000';
+            sparkle.style.animation = 'sparkleFloat 2s ease-out forwards';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                document.body.removeChild(sparkle);
+            }, 2000);
+        }
+        
+        // Add CSS for sparkle animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkleFloat {
+                0% {
+                    opacity: 1;
+                    transform: translateY(0) scale(0);
+                }
+                50% {
+                    opacity: 1;
+                    transform: translateY(-30px) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-60px) scale(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

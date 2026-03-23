@@ -119,12 +119,13 @@ nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(2rem, 5vw, 5rem);
-    align-items: center;
+    align-items: start;
     padding: clamp(2rem, 5vw, 5rem) 0;
     min-height: 85dvh;
 }
 
 .hero-content {
+    align-self: start;
     opacity: 0;
     animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
 }
@@ -238,12 +239,12 @@ h1 span {
 
 /* --- Hero image --- */
 .hero-image {
-    position: relative;
     opacity: 0;
     animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 65dvh;
 }
 
 .hero-image img {
@@ -821,21 +822,31 @@ body:hover .cursor-glow {
     }
 }
 
-/* --- 3D tilt on cards and hero image --- */
-.tilt-3d {
-    transform-style: preserve-3d;
-    perspective: 800px;
-}
-
 /* --- Magnetic button --- */
 .btn-magnetic {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Hero text scramble --- */
-.scramble-char {
+/* --- Typewriter cursor --- */
+.typewriter-cursor {
     display: inline-block;
-    transition: none;
+    color: var(--accent);
+    font-weight: 300;
+    animation: cursorBlink 0.6s step-end infinite;
+    margin-left: 2px;
+}
+
+.typewriter-cursor-done {
+    animation: cursorFadeOut 0.4s ease forwards;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes cursorFadeOut {
+    to { opacity: 0; }
 }
 
 /* --- Easter egg chili rain --- */
@@ -867,8 +878,8 @@ body:hover .cursor-glow {
         gap: 3rem;
     }
 
-    .hero-content { order: 2; }
-    .hero-image { order: 1; }
+    .hero-content { order: 1; }
+    .hero-image { order: 2; min-height: auto; }
     .hero-desc { max-width: none; }
 
     .story-content {

@@ -149,46 +149,6 @@ setInterval(spawnEmber, 800);
 for (let i = 0; i < 5; i++) setTimeout(spawnEmber, i * 150);
 
 // =============================================
-// --- 3D tilt on hover ---
-// =============================================
-if (isFinePointer) {
-    // Hero image tilt
-    document.querySelectorAll('.tilt-3d').forEach((el) => {
-        const img = el.querySelector('img');
-        if (!img) return;
-
-        el.addEventListener('mousemove', (e) => {
-            const rect = el.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            img.style.transform = `rotateY(${x * 15}deg) rotateX(${-y * 15}deg) scale(1.03)`;
-            img.style.transition = 'transform 0.1s ease-out';
-        });
-
-        el.addEventListener('mouseleave', () => {
-            img.style.transform = 'rotateY(0) rotateX(0) scale(1)';
-            img.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-        });
-    });
-
-    // Feature card tilt
-    document.querySelectorAll('.feature-card').forEach((card) => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            card.style.transform = `perspective(600px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateY(-3px)`;
-            card.style.transition = 'transform 0.1s ease-out, background 0.4s, border-color 0.4s';
-        });
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(600px) rotateY(0) rotateX(0) translateY(0)';
-            card.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s, border-color 0.4s';
-        });
-    });
-}
-
-// =============================================
 // --- Magnetic buttons ---
 // =============================================
 if (isFinePointer) {
@@ -211,62 +171,80 @@ if (isFinePointer) {
 }
 
 // =============================================
-// --- Hero text scramble on load ---
+// --- Hero typewriter on load ---
 // =============================================
-(function scrambleInit() {
-    const h1 = document.querySelector('[data-scramble]');
+(function typewriterInit() {
+    const h1 = document.querySelector('[data-typewriter]');
     if (!h1) return;
 
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%&*';
+    // Build a flat list of segments: { type: 'text'|'br'|'span-start'|'span-end', value }
+    const segments = [];
+    const originalHTML = h1.innerHTML;
 
-    // Parse the h1 into text nodes and elements, preserving <br> and <span>
-    const original = h1.innerHTML;
-    const textParts = []; // { node, text, index }
+    h1.childNodes.forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent;
+            for (const ch of text) segments.push({ type: 'text', value: ch });
+        } else if (node.tagName === 'BR') {
+            segments.push({ type: 'br' });
+        } else if (node.tagName === 'SPAN') {
+            segments.push({ type: 'span-start' });
+            for (const ch of node.textContent) segments.push({ type: 'text', value: ch, inSpan: true });
+            segments.push({ type: 'span-end' });
+        }
+    });
 
-    function collectTextNodes(parent) {
-        parent.childNodes.forEach((node) => {
-            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-                textParts.push({ node, text: node.textContent });
-            } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
-                collectTextNodes(node);
-            }
-        });
+    // Clear the h1 and set up cursor
+    h1.innerHTML = '';
+    h1.classList.add('typewriter-active');
+
+    const cursor = document.createElement('span');
+    cursor.className = 'typewriter-cursor';
+    cursor.textContent = '|';
+
+    let currentSpan = null;
+    let i = 0;
+    const startDelay = 700; // wait for fadeUp
+    const charDelay = 70;
+
+    function typeNext() {
+        if (i >= segments.length) {
+            // Done — remove cursor after a moment
+            setTimeout(() => cursor.classList.add('typewriter-cursor-done'), 600);
+            return;
+        }
+
+        const seg = segments[i];
+        i++;
+
+        if (seg.type === 'br') {
+            // Remove cursor, add br, re-append cursor
+            cursor.remove();
+            h1.appendChild(document.createElement('br'));
+            h1.appendChild(cursor);
+            setTimeout(typeNext, charDelay * 3);
+        } else if (seg.type === 'span-start') {
+            cursor.remove();
+            currentSpan = document.createElement('span');
+            h1.appendChild(currentSpan);
+            currentSpan.appendChild(cursor);
+            typeNext(); // no delay for opening tag
+        } else if (seg.type === 'span-end') {
+            cursor.remove();
+            currentSpan = null;
+            h1.appendChild(cursor);
+            typeNext(); // no delay for closing tag
+        } else {
+            // Text character
+            cursor.remove();
+            const parent = currentSpan || h1;
+            parent.appendChild(document.createTextNode(seg.value));
+            parent.appendChild(cursor);
+            setTimeout(typeNext, charDelay);
+        }
     }
 
-    collectTextNodes(h1);
-
-    // Scramble each text node
-    const totalChars = textParts.reduce((sum, p) => sum + p.text.length, 0);
-    let resolved = 0;
-
-    textParts.forEach((part) => {
-        const finalText = part.text;
-        let current = finalText.split('').map(() => chars[Math.floor(Math.random() * chars.length)]);
-        part.node.textContent = current.join('');
-
-        const perCharDelay = 40;
-        const startDelay = 600; // after fadeUp starts
-
-        finalText.split('').forEach((char, i) => {
-            const delay = startDelay + i * perCharDelay + Math.random() * 80;
-
-            // Intermediate scrambles
-            const scrambleCount = 3 + Math.floor(Math.random() * 3);
-            for (let s = 0; s < scrambleCount; s++) {
-                setTimeout(() => {
-                    current[i] = chars[Math.floor(Math.random() * chars.length)];
-                    part.node.textContent = current.join('');
-                }, delay - (scrambleCount - s) * 50);
-            }
-
-            // Final resolve
-            setTimeout(() => {
-                current[i] = char;
-                part.node.textContent = current.join('');
-                resolved++;
-            }, delay);
-        });
-    });
+    setTimeout(typeNext, startDelay);
 })();
 
 // =============================================

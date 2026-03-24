@@ -25,6 +25,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: clip;
 }
 
 body {
@@ -33,7 +34,7 @@ body {
     color: var(--text-primary);
     background: var(--bg);
     min-height: 100dvh;
-    overflow-x: hidden;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -660,6 +661,7 @@ h2 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.25rem;
+    overflow: hidden;
 }
 
 .feature-card {
@@ -1389,6 +1391,21 @@ body:hover .cursor-glow {
         min-height: auto;
         height: auto;
         padding: 4rem 0;
+    }
+
+    .ingredients-pinned,
+    .process-viewport {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .ambient-glow {
+        display: none;
+    }
+
+    .wrapper {
+        overflow-x: clip;
     }
 
     /* Simplify burn-in on mobile to prevent lag */

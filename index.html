@@ -47,15 +47,17 @@
         <div class="divider"></div>
 
         <!-- Story -->
-        <section class="story" id="story">
-            <div class="story-content">
-                <div class="reveal-left">
-                    <div class="section-label">How it started</div>
-                    <h2>We burned a lot of garlic getting here</h2>
-                </div>
-                <div class="reveal-right reveal-delay-1">
-                    <p>The first batch was terrible. Way too much salt, not enough crunch. But we kept going. Different chilis, different oil temps, different roast times. Somewhere around batch twenty, people started asking for extra jars.</p>
-                    <p>We still make it the same way: in our kitchen, one batch at a time. No factory, no production line. Just a stove, a mortar, and a lot of patience.</p>
+        <section class="story section-runway" id="story">
+            <div class="section-sticky">
+                <div class="story-content">
+                    <div>
+                        <div class="section-label">How it started</div>
+                        <h2>We burned a lot of garlic getting here</h2>
+                    </div>
+                    <div class="reveal-right reveal-delay-1">
+                        <p>The first batch was terrible. Way too much salt, not enough crunch. But we kept going. Different chilis, different oil temps, different roast times. Somewhere around batch twenty, people started asking for extra jars.</p>
+                        <p>We still make it the same way: in our kitchen, one batch at a time. No factory, no production line. Just a stove, a mortar, and a lot of patience.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -156,8 +158,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="process-progress">
-                        <div class="process-progress-fill"></div>
+                    <div class="process-nav">
+                        <button class="process-prev" aria-label="Previous step">
+                            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        </button>
+                        <div class="process-dots">
+                            <button class="process-dot active" data-slide="0" aria-label="Go to step 1"></button>
+                            <button class="process-dot" data-slide="1" aria-label="Go to step 2"></button>
+                            <button class="process-dot" data-slide="2" aria-label="Go to step 3"></button>
+                            <button class="process-dot" data-slide="3" aria-label="Go to step 4"></button>
+                        </div>
+                        <button class="process-next" aria-label="Next step">
+                            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -166,7 +179,8 @@
         <div class="divider"></div>
 
         <!-- Features -->
-        <section class="features">
+        <section class="features section-runway">
+            <div class="section-sticky">
             <div class="features-header reveal">
                 <div class="section-label">Why people keep coming back</div>
                 <h2>We've asked. Here's what they tell us.</h2>
@@ -205,20 +219,23 @@
                     <p>Every batch still gets the same fuss as the first one we made for ourselves.</p>
                 </div>
             </div>
+            </div>
         </section>
 
         <div class="divider"></div>
 
         <!-- Testimonial -->
-        <section class="testimonial">
-            <div class="testimonial-card reveal-scale">
-                <div>
-                    <div class="quote-mark">"</div>
-                    <p class="testimonial-text">I put this on toast at midnight and it was life-changing. Two jars gone already. Please make more.</p>
-                    <div class="testimonial-author"><strong>Jakob Z.</strong> · Friend &amp; First Taster</div>
-                </div>
-                <div class="testimonial-jar parallax" data-speed="0.05">
-                    <img src="images/jakob_z.jfif" alt="Jakob Z.">
+        <section class="testimonial section-runway">
+            <div class="section-sticky">
+                <div class="testimonial-card reveal-scale">
+                    <div>
+                        <div class="quote-mark">"</div>
+                        <p class="testimonial-text">I put this on toast at midnight and it was life-changing. Two jars gone already. Please make more.</p>
+                        <div class="testimonial-author"><strong>Jakob Z.</strong> · Friend &amp; First Taster</div>
+                    </div>
+                    <div class="testimonial-jar parallax" data-speed="0.05">
+                        <img src="images/jakob_z.jfif" alt="Jakob Z.">
+                    </div>
                 </div>
             </div>
         </section>
@@ -226,15 +243,17 @@
         <div class="divider"></div>
 
         <!-- CTA -->
-        <section class="cta" id="signup">
-            <div class="cta-inner reveal">
-                <div class="section-label">Limited Batches</div>
-                <h2>Join the Crispy Chili List</h2>
-                <p>We make it in small batches and it goes fast. Drop your email and we'll let you know when the next one's ready.</p>
-                <a href="#" class="btn-primary btn-magnetic" data-signup>
-                    Count Me In
-                    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
+        <section class="cta section-runway" id="signup">
+            <div class="section-sticky">
+                <div class="cta-inner reveal">
+                    <div class="section-label">Limited Batches</div>
+                    <h2>Join the Crispy Chili List</h2>
+                    <p>We make it in small batches and it goes fast. Drop your email and we'll let you know when the next one's ready.</p>
+                    <a href="#" class="btn-primary btn-magnetic" data-signup>
+                        Count Me In
+                        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
             </div>
         </section>
 

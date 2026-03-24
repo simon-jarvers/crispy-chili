@@ -143,10 +143,11 @@ function spawnEmber() {
     ember.addEventListener('animationend', () => ember.remove());
 }
 
-// Spawn embers at intervals
-setInterval(spawnEmber, 800);
-// Initial burst
-for (let i = 0; i < 5; i++) setTimeout(spawnEmber, i * 150);
+// Spawn embers at intervals (less frequent on mobile)
+const emberInterval = window.innerWidth <= 768 ? 2000 : 800;
+const emberBurst = window.innerWidth <= 768 ? 2 : 5;
+setInterval(spawnEmber, emberInterval);
+for (let i = 0; i < emberBurst; i++) setTimeout(spawnEmber, i * 150);
 
 // =============================================
 // --- Magnetic buttons ---
@@ -176,6 +177,8 @@ if (isFinePointer) {
 (function burnInInit() {
     const h1 = document.querySelector('[data-burn-in]');
     if (!h1) return;
+
+    const isMobile = window.innerWidth <= 768;
 
     h1.style.position = 'relative';
 
@@ -217,7 +220,10 @@ if (isFinePointer) {
     }
 
     function spawnSparks(rect, isAccent) {
-        const count = isAccent ? (6 + Math.floor(Math.random() * 4)) : (3 + Math.floor(Math.random() * 4));
+        // Fewer sparks on mobile
+        const count = isMobile
+            ? (isAccent ? 2 : 1)
+            : (isAccent ? (6 + Math.floor(Math.random() * 4)) : (3 + Math.floor(Math.random() * 4)));
 
         for (let s = 0; s < count; s++) {
             const spark = document.createElement('span');
@@ -285,7 +291,7 @@ if (isFinePointer) {
 
     // Stagger the burn-in
     const startDelay = 600;
-    const charDelay = 60;
+    const charDelay = isMobile ? 40 : 60;
 
     charSpans.forEach((span, i) => {
         const delay = startDelay + i * charDelay;
@@ -293,28 +299,37 @@ if (isFinePointer) {
 
         setTimeout(() => {
             span.classList.add('burn-visible');
-            fireLineSweep(span);
+
+            // Skip flame sweep and wisps on mobile
+            if (!isMobile) {
+                fireLineSweep(span);
+            }
 
             const rect = span.getBoundingClientRect();
 
             // Don't spark on whitespace
             if (span.textContent.trim()) {
-                spawnSparks(rect, isAccent);
-
-                // Delayed secondary + tertiary spark bursts for accent chars
-                if (isAccent) {
-                    setTimeout(() => spawnSparks(rect, false), 100);
-                    setTimeout(() => spawnSparks(rect, false), 250);
+                // On mobile: only spark on accent chars
+                if (!isMobile || isAccent) {
+                    spawnSparks(rect, isAccent);
                 }
 
-                // Heat wisps from ~60% of characters
-                if (Math.random() > 0.4) {
-                    setTimeout(() => spawnWisps(rect), 150 + Math.random() * 200);
-                }
-                // Accent chars always get wisps
-                if (isAccent) {
-                    setTimeout(() => spawnWisps(rect), 50);
-                    setTimeout(() => spawnWisps(rect), 300);
+                if (!isMobile) {
+                    // Delayed secondary + tertiary spark bursts for accent chars
+                    if (isAccent) {
+                        setTimeout(() => spawnSparks(rect, false), 100);
+                        setTimeout(() => spawnSparks(rect, false), 250);
+                    }
+
+                    // Heat wisps from ~60% of characters
+                    if (Math.random() > 0.4) {
+                        setTimeout(() => spawnWisps(rect), 150 + Math.random() * 200);
+                    }
+                    // Accent chars always get wisps
+                    if (isAccent) {
+                        setTimeout(() => spawnWisps(rect), 50);
+                        setTimeout(() => spawnWisps(rect), 300);
+                    }
                 }
             }
         }, delay);
@@ -322,66 +337,63 @@ if (isFinePointer) {
 })();
 
 // =============================================
-// --- Pinned process slideshow (smooth eased scrolling) ---
+// --- Process slideshow (buttons/swipe only, looping) ---
 // =============================================
-(function processPinned() {
-    const runway = document.querySelector('.process-runway');
-    const sticky = document.querySelector('.process-sticky');
+(function processSlideshow() {
     const track = document.querySelector('.process-track');
-    const progressFill = document.querySelector('.process-progress-fill');
-    if (!runway || !sticky || !track) return;
+    const prevBtn = document.querySelector('.process-prev');
+    const nextBtn = document.querySelector('.process-next');
+    const dots = document.querySelectorAll('.process-dot');
+    if (!track || !prevBtn || !nextBtn) return;
 
     const slideCount = track.children.length;
-    let currentX = 0;
-    let targetX = 0;
+    let current = 0;
 
-    // Magnetic snap: strong dwell on each slide, fast snap between them
-    function easeProgress(t) {
-        const slide = t * (slideCount - 1);
-        const current = Math.floor(Math.min(slide, slideCount - 2));
-        const frac = slide - current;
-        // Quintic ease — nearly flat for ~70% of each segment, then snaps quickly
-        const eased = frac < 0.5
-            ? 32 * Math.pow(frac, 6)
-            : 1 - 32 * Math.pow(1 - frac, 6);
-        return (current + eased) / (slideCount - 1);
+    function goTo(index) {
+        if (index < 0) index = slideCount - 1;
+        if (index >= slideCount) index = 0;
+        current = index;
+        track.style.transform = `translateX(${current * -25}%)`;
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
     }
 
-    function update() {
-        const runwayRect = runway.getBoundingClientRect();
-        const runwayHeight = runway.offsetHeight - window.innerHeight;
-        const scrolled = -runwayRect.top;
-        const rawProgress = Math.max(0, Math.min(1, scrolled / runwayHeight));
+    prevBtn.addEventListener('click', () => goTo(current - 1));
+    nextBtn.addEventListener('click', () => goTo(current + 1));
 
-        if (rawProgress > 0.01) {
-            sticky.classList.add('active');
-        } else {
-            sticky.classList.remove('active');
-        }
+    dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+            goTo(parseInt(dot.dataset.slide, 10));
+        });
+    });
 
-        const easedProgress = easeProgress(rawProgress);
-        targetX = easedProgress * (slideCount - 1) * -25;
+    // Touch/swipe support
+    let touchStartX = 0;
+    let touchDelta = 0;
+    const viewport = document.querySelector('.process-viewport');
 
-        if (progressFill) {
-            progressFill.style.width = (rawProgress * 100) + '%';
-        }
+    if (viewport) {
+        viewport.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchDelta = 0;
+            track.style.transition = 'none';
+        }, { passive: true });
+
+        viewport.addEventListener('touchmove', (e) => {
+            touchDelta = e.touches[0].clientX - touchStartX;
+            const baseX = current * -25;
+            const dragPercent = (touchDelta / viewport.offsetWidth) * 25;
+            track.style.transform = `translateX(${baseX + dragPercent}%)`;
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', () => {
+            track.style.transition = '';
+            if (touchDelta < -50) goTo(current + 1);
+            else if (touchDelta > 50) goTo(current - 1);
+            else goTo(current);
+        });
     }
 
-    // Lerp loop for buttery smooth interpolation
-    function animate() {
-        currentX += (targetX - currentX) * 0.08;
-        // Stop jittering when close enough
-        if (Math.abs(targetX - currentX) < 0.01) currentX = targetX;
-        track.style.transform = `translateX(${currentX}%)`;
-        requestAnimationFrame(animate);
-    }
-
-    window.addEventListener('scroll', () => {
-        update();
-    }, { passive: true });
-
-    update();
-    animate();
+    goTo(0);
 })();
 
 // =============================================
@@ -401,61 +413,28 @@ const dealObserver = new IntersectionObserver(
 document.querySelectorAll('.deal-card').forEach((el) => dealObserver.observe(el));
 
 // =============================================
-// --- Pinned ingredients scroll ---
+// --- Ingredients fade-in (one-time on scroll) ---
 // =============================================
-(function ingredientsPinned() {
-    const runway = document.querySelector('.ingredients-runway');
+(function ingredientsFadeIn() {
     const sticky = document.querySelector('.ingredients-sticky');
-    if (!runway || !sticky) return;
+    if (!sticky) return;
 
     const items = document.querySelectorAll('.ingredient-item');
-    const totalItems = items.length;
 
-    function update() {
-        const runwayRect = runway.getBoundingClientRect();
-        const runwayHeight = runway.offsetHeight - window.innerHeight;
-
-        // progress: 0 at top, 1 at bottom of runway
-        const scrolled = -runwayRect.top;
-        const progress = Math.max(0, Math.min(1, scrolled / runwayHeight));
-
-        // Activate sticky at progress > 0
-        if (progress > 0.02) {
-            sticky.classList.add('active');
-        } else {
-            sticky.classList.remove('active');
-        }
-
-        // Reveal ingredients one by one (spread across 15%-80% of scroll)
-        items.forEach((item, i) => {
-            const threshold = 0.15 + (i / totalItems) * 0.55;
-            if (progress >= threshold) {
-                item.classList.add('visible');
-            } else {
-                item.classList.remove('visible');
-            }
-        });
-
-        // Outro text at ~85%
-        if (progress >= 0.82) {
-            sticky.classList.add('outro-visible');
-        } else {
-            sticky.classList.remove('outro-visible');
-        }
-    }
-
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                update();
-                ticking = false;
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    sticky.classList.add('active');
+                    items.forEach((item) => item.classList.add('visible'));
+                    observer.unobserve(entry.target);
+                }
             });
-            ticking = true;
-        }
-    }, { passive: true });
+        },
+        { threshold: 0.4 }
+    );
 
-    update();
+    observer.observe(sticky);
 })();
 
 // =============================================

@@ -322,6 +322,143 @@ if (isFinePointer) {
 })();
 
 // =============================================
+// --- Pinned process slideshow (smooth eased scrolling) ---
+// =============================================
+(function processPinned() {
+    const runway = document.querySelector('.process-runway');
+    const sticky = document.querySelector('.process-sticky');
+    const track = document.querySelector('.process-track');
+    const progressFill = document.querySelector('.process-progress-fill');
+    if (!runway || !sticky || !track) return;
+
+    const slideCount = track.children.length;
+    let currentX = 0;
+    let targetX = 0;
+
+    // Magnetic snap: strong dwell on each slide, fast snap between them
+    function easeProgress(t) {
+        const slide = t * (slideCount - 1);
+        const current = Math.floor(Math.min(slide, slideCount - 2));
+        const frac = slide - current;
+        // Quintic ease — nearly flat for ~70% of each segment, then snaps quickly
+        const eased = frac < 0.5
+            ? 32 * Math.pow(frac, 6)
+            : 1 - 32 * Math.pow(1 - frac, 6);
+        return (current + eased) / (slideCount - 1);
+    }
+
+    function update() {
+        const runwayRect = runway.getBoundingClientRect();
+        const runwayHeight = runway.offsetHeight - window.innerHeight;
+        const scrolled = -runwayRect.top;
+        const rawProgress = Math.max(0, Math.min(1, scrolled / runwayHeight));
+
+        if (rawProgress > 0.01) {
+            sticky.classList.add('active');
+        } else {
+            sticky.classList.remove('active');
+        }
+
+        const easedProgress = easeProgress(rawProgress);
+        targetX = easedProgress * (slideCount - 1) * -25;
+
+        if (progressFill) {
+            progressFill.style.width = (rawProgress * 100) + '%';
+        }
+    }
+
+    // Lerp loop for buttery smooth interpolation
+    function animate() {
+        currentX += (targetX - currentX) * 0.08;
+        // Stop jittering when close enough
+        if (Math.abs(targetX - currentX) < 0.01) currentX = targetX;
+        track.style.transform = `translateX(${currentX}%)`;
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('scroll', () => {
+        update();
+    }, { passive: true });
+
+    update();
+    animate();
+})();
+
+// =============================================
+// --- Feature cards deal-in ---
+// =============================================
+const dealObserver = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('dealt');
+            }
+        });
+    },
+    { threshold: 0.2 }
+);
+
+document.querySelectorAll('.deal-card').forEach((el) => dealObserver.observe(el));
+
+// =============================================
+// --- Pinned ingredients scroll ---
+// =============================================
+(function ingredientsPinned() {
+    const runway = document.querySelector('.ingredients-runway');
+    const sticky = document.querySelector('.ingredients-sticky');
+    if (!runway || !sticky) return;
+
+    const items = document.querySelectorAll('.ingredient-item');
+    const totalItems = items.length;
+
+    function update() {
+        const runwayRect = runway.getBoundingClientRect();
+        const runwayHeight = runway.offsetHeight - window.innerHeight;
+
+        // progress: 0 at top, 1 at bottom of runway
+        const scrolled = -runwayRect.top;
+        const progress = Math.max(0, Math.min(1, scrolled / runwayHeight));
+
+        // Activate sticky at progress > 0
+        if (progress > 0.02) {
+            sticky.classList.add('active');
+        } else {
+            sticky.classList.remove('active');
+        }
+
+        // Reveal ingredients one by one (spread across 15%-80% of scroll)
+        items.forEach((item, i) => {
+            const threshold = 0.15 + (i / totalItems) * 0.55;
+            if (progress >= threshold) {
+                item.classList.add('visible');
+            } else {
+                item.classList.remove('visible');
+            }
+        });
+
+        // Outro text at ~85%
+        if (progress >= 0.82) {
+            sticky.classList.add('outro-visible');
+        } else {
+            sticky.classList.remove('outro-visible');
+        }
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                update();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+
+    update();
+})();
+
+// =============================================
 // --- Easter egg: Konami-style chili code ---
 // --- Sequence: up up down down left right left right
 // =============================================

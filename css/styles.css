@@ -248,12 +248,142 @@ h1 span {
 }
 
 .hero-image img {
-    width: clamp(300px, 26vw, 420px);
-    height: clamp(300px, 26vw, 420px);
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid var(--border);
-    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6);
+    width: clamp(180px, 18vw, 280px);
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.5));
+}
+
+/* --- Ingredients pinned section --- */
+.ingredients-pinned {
+    position: relative;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+}
+
+.ingredients-runway {
+    height: 300vh;
+    position: relative;
+}
+
+.ingredients-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    padding-top: clamp(2rem, 5vw, 4rem);
+}
+
+.ingredients-sticky .section-label,
+.ingredients-title {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.ingredients-sticky.active .section-label,
+.ingredients-sticky.active .ingredients-title {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ingredients-title {
+    transition-delay: 0.1s;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.ingredients-stage {
+    position: relative;
+    width: clamp(400px, 65vw, 700px);
+    height: clamp(300px, 50vw, 500px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ingredients-jar {
+    width: clamp(160px, 20vw, 240px);
+    height: auto;
+    z-index: 2;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ingredients-sticky.active .ingredients-jar {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.ingredients-jar img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+}
+
+.ingredient-item {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+}
+
+.ingredient-item.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+.ingredient-item img {
+    width: clamp(90px, 12vw, 140px);
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+}
+
+.ingredient-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+/* Position ingredients around the jar — spread wide left/right */
+.ingredient-item-1 { top: 0;      left: 0;  }
+.ingredient-item-2 { top: 0;      right: 0; }
+.ingredient-item-3 { bottom: 0; left: 0;  }
+.ingredient-item-4 { bottom: 0; right: 0; }
+
+/* Shift salt image up without moving its label */
+.ingredient-item-4 img { position: relative; top: -15px; }
+
+.ingredients-outro {
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+}
+
+.ingredients-sticky.outro-visible .ingredients-outro {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* --- Divider --- */
@@ -307,14 +437,38 @@ h2 {
     margin-top: 1.2rem;
 }
 
-/* --- Process section --- */
-.process {
-    padding: clamp(4rem, 10vw, 8rem) 0;
+/* --- Process pinned slideshow --- */
+.process-pinned {
+    position: relative;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
 }
 
-.process-header {
-    margin-bottom: clamp(3rem, 6vw, 5rem);
-    max-width: 560px;
+.process-runway {
+    height: 800vh;
+    position: relative;
+}
+
+.process-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.process-sticky .process-header {
+    padding: clamp(2rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem) 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.process-sticky.active .process-header {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .process-header p {
@@ -322,72 +476,110 @@ h2 {
     font-weight: 300;
     color: var(--text-secondary);
     line-height: 1.7;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
-.process-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-}
-
-.process-card {
+.process-viewport {
+    flex: 1;
     position: relative;
-    border-radius: 1.5rem;
     overflow: hidden;
-    aspect-ratio: 4/3;
-    border: 1px solid var(--border);
-    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
 }
 
-.process-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.process-card:hover img {
-    transform: scale(1.04);
-}
-
-.process-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    pointer-events: none;
-}
-
-.process-card-label {
-    position: absolute;
-    bottom: 1.5rem;
-    left: 1.5rem;
-    background: rgba(12, 9, 6, 0.75);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 0.5rem 1rem;
-    border-radius: 100px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--warm-white);
+.process-track {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    height: 100%;
+    width: 400%;
+    will-change: transform;
 }
 
-.process-card-label .step-num {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--bg);
+.process-slide {
+    width: 25%;
+    height: 100%;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.65rem;
+    gap: clamp(2rem, 4vw, 4rem);
+    padding: clamp(3rem, 6vw, 5rem) clamp(2rem, 5vw, 6rem);
+}
+
+.process-slide-img {
+    flex: 0 1 auto;
+    width: 60%;
+    max-height: 120%;
+    aspect-ratio: 9 / 16;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5);
+}
+
+.process-slide-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.process-slide-text {
+    flex: 0 0 auto;
+    max-width: 280px;
+}
+
+.process-slide-text .step-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+}
+
+.process-slide-text .step-num {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
     font-weight: 700;
+    flex-shrink: 0;
+}
+
+.process-slide-text h3 {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+}
+
+.process-slide-text p {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.process-progress {
+    height: 3px;
+    background: var(--border);
+    margin: 0 clamp(2rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2rem);
+    border-radius: 3px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.process-sticky.active .process-progress {
+    opacity: 1;
+}
+
+.process-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.1s linear;
 }
 
 /* --- Features --- */
@@ -409,41 +601,10 @@ h2 {
     margin-top: 1rem;
 }
 
-.features-layout {
+.features-deal {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: clamp(2rem, 5vw, 3rem);
-    align-items: start;
-}
-
-.features-image {
-    position: relative;
-    width: clamp(240px, 24vw, 340px);
-    height: clamp(240px, 24vw, 340px);
-    border-radius: 50%;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-    align-self: center;
-}
-
-.features-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.features-image:hover img {
-    transform: scale(1.04);
-}
-
-.features-column {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
 }
 
 .feature-card {
@@ -454,6 +615,77 @@ h2 {
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+}
+
+/* Deal-in animation */
+.deal-card {
+    opacity: 0;
+    transform: translateX(80px) rotate(6deg);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.deal-card[data-deal="1"] {
+    transition-delay: 0.1s;
+    transform: translateX(80px) rotate(4deg);
+}
+
+.deal-card[data-deal="2"] {
+    transition-delay: 0.2s;
+    transform: translateX(80px) rotate(-3deg);
+}
+
+.deal-card[data-deal="3"] {
+    transition-delay: 0.3s;
+    transform: translateX(80px) rotate(-5deg);
+}
+
+.deal-card.dealt {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+}
+
+/* Glowing border trace */
+.feature-card-glow {
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.feature-card-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+        from var(--glow-angle, 0deg),
+        transparent 0%,
+        var(--accent) 10%,
+        transparent 20%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.deal-card.dealt .feature-card-glow {
+    opacity: 1;
+    animation: glowSpin 3s linear infinite;
+}
+
+@keyframes glowSpin {
+    to { --glow-angle: 360deg; }
+}
+
+@property --glow-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
 }
 
 .feature-card::before {
@@ -505,7 +737,6 @@ h2 {
     font-weight: 300;
     color: var(--text-secondary);
     line-height: 1.65;
-    max-width: 40ch;
 }
 
 /* --- Testimonial --- */
@@ -1070,16 +1301,44 @@ body:hover .cursor-glow {
         grid-template-columns: 1fr;
     }
 
-    .process-grid {
-        grid-template-columns: 1fr;
+    .process-slide {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem 1.5rem;
     }
 
-    .features-layout {
-        grid-template-columns: 1fr;
+    .process-slide-img {
+        max-width: 100%;
+        height: 50%;
     }
 
-    .features-image {
-        margin: 0 auto;
+    .process-slide-text {
+        text-align: center;
+    }
+
+    .features-deal {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .ingredients-runway {
+        height: 250vh;
+    }
+
+    .ingredients-stage {
+        width: 90vw;
+        height: 90vw;
+        max-width: 400px;
+        max-height: 400px;
+    }
+
+    .ingredient-item img {
+        width: 70px;
+        height: auto;
+    }
+
+    .ingredient-label {
+        font-size: 0.65rem;
     }
 
     .testimonial-card {

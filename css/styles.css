@@ -827,26 +827,210 @@ body:hover .cursor-glow {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Typewriter cursor --- */
-.typewriter-cursor {
+/* --- Burn-in text reveal --- */
+.burn-char {
     display: inline-block;
-    color: var(--accent);
-    font-weight: 300;
-    animation: cursorBlink 0.6s step-end infinite;
-    margin-left: 2px;
+    opacity: 0;
+    filter: blur(8px) brightness(1);
+    color: #fff;
+    text-shadow: none;
+    transition: none;
+    position: relative;
 }
 
-.typewriter-cursor-done {
-    animation: cursorFadeOut 0.4s ease forwards;
+.burn-char.burn-visible {
+    animation: burnIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes cursorBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+.burn-accent.burn-visible {
+    animation: burnInAccent 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes cursorFadeOut {
-    to { opacity: 0; }
+@keyframes burnIn {
+    0% {
+        opacity: 0;
+        filter: blur(8px) brightness(3);
+        color: #fff;
+        text-shadow:
+            0 0 30px rgba(255, 255, 200, 1),
+            0 0 60px rgba(255, 120, 30, 0.9),
+            0 0 100px rgba(194, 55, 27, 0.6),
+            0 -10px 40px rgba(255, 80, 20, 0.5);
+    }
+    15% {
+        opacity: 1;
+        filter: blur(0) brightness(2.5);
+        color: #fff;
+        text-shadow:
+            0 0 25px rgba(255, 255, 200, 0.9),
+            0 0 50px rgba(255, 120, 30, 0.8),
+            0 0 80px rgba(194, 55, 27, 0.5),
+            0 -8px 30px rgba(255, 80, 20, 0.4);
+    }
+    40% {
+        filter: blur(0) brightness(1.6);
+        color: #ffc070;
+        text-shadow:
+            0 0 15px rgba(255, 140, 50, 0.7),
+            0 0 35px rgba(194, 55, 27, 0.4),
+            0 -5px 20px rgba(255, 80, 20, 0.2);
+    }
+    70% {
+        filter: blur(0) brightness(1.1);
+        color: #e0b090;
+        text-shadow:
+            0 0 8px rgba(194, 55, 27, 0.2);
+    }
+    100% {
+        opacity: 1;
+        filter: blur(0) brightness(1);
+        color: var(--text-primary);
+        text-shadow: none;
+    }
+}
+
+@keyframes burnInAccent {
+    0% {
+        opacity: 0;
+        filter: blur(8px) brightness(4);
+        color: #fff;
+        text-shadow:
+            0 0 40px rgba(255, 255, 220, 1),
+            0 0 80px rgba(255, 140, 50, 1),
+            0 0 120px rgba(194, 55, 27, 0.8),
+            0 -15px 60px rgba(255, 80, 20, 0.6);
+    }
+    12% {
+        opacity: 1;
+        filter: blur(0) brightness(3);
+        color: #fff;
+        text-shadow:
+            0 0 35px rgba(255, 255, 220, 1),
+            0 0 70px rgba(255, 140, 50, 0.9),
+            0 0 100px rgba(194, 55, 27, 0.6),
+            0 -12px 50px rgba(255, 80, 20, 0.5);
+    }
+    35% {
+        filter: blur(0) brightness(2);
+        color: #ffaa50;
+        text-shadow:
+            0 0 25px rgba(255, 140, 50, 0.8),
+            0 0 50px rgba(194, 55, 27, 0.5),
+            0 -8px 30px rgba(255, 80, 20, 0.3);
+    }
+    65% {
+        filter: blur(0) brightness(1.3);
+        color: #e06030;
+        text-shadow:
+            0 0 12px rgba(194, 55, 27, 0.4),
+            0 0 25px rgba(194, 55, 27, 0.15);
+    }
+    100% {
+        opacity: 1;
+        filter: blur(0) brightness(1);
+        color: var(--accent);
+        text-shadow: 0 0 10px rgba(194, 55, 27, 0.2);
+    }
+}
+
+/* --- Burn spark particles --- */
+.burn-spark {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    border-radius: 50%;
+    animation: sparkFly var(--spark-dur, 1.6s) cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+}
+
+.burn-spark--ember {
+    width: var(--size, 5px);
+    height: var(--size, 5px);
+    background: var(--spark-color, #ff8040);
+    box-shadow:
+        0 0 var(--glow, 10px) var(--spark-color, #ff6a2a),
+        0 0 calc(var(--glow, 10px) * 2) rgba(255, 100, 30, 0.3);
+}
+
+.burn-spark--flame {
+    width: var(--size, 8px);
+    height: calc(var(--size, 8px) * 2.2);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: linear-gradient(to top, var(--spark-color, #ff4500), #ffe060, rgba(255, 255, 200, 0.9));
+    box-shadow:
+        0 0 var(--glow, 14px) var(--spark-color, #ff4500),
+        0 0 calc(var(--glow, 14px) * 2.5) rgba(255, 80, 20, 0.4);
+}
+
+@keyframes sparkFly {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1) rotate(0deg);
+    }
+    30% {
+        opacity: 1;
+    }
+    65% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--dx), var(--dy)) scale(0.15) rotate(var(--rot, 60deg));
+    }
+}
+
+/* --- Heat wisp (rising from text) --- */
+.heat-wisp {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    width: 3px;
+    height: 35px;
+    background: linear-gradient(to top, rgba(255, 120, 40, 0.5), rgba(255, 80, 20, 0.15), transparent);
+    border-radius: 3px;
+    filter: blur(2px);
+    animation: wispRise var(--wisp-dur, 2.2s) ease-out forwards;
+}
+
+@keyframes wispRise {
+    0% {
+        opacity: 0.8;
+        transform: translateX(0) translateY(0) scaleY(1);
+    }
+    40% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(var(--wisp-drift, 10px)) translateY(-100px) scaleY(0.2);
+    }
+}
+
+/* --- Line flame sweep glow --- */
+.flame-sweep {
+    position: absolute;
+    pointer-events: none;
+    width: 80px;
+    height: 150%;
+    top: -25%;
+    left: 0;
+    background: radial-gradient(ellipse at center, rgba(255, 180, 60, 0.5) 0%, rgba(255, 100, 30, 0.25) 35%, rgba(194, 55, 27, 0.1) 55%, transparent 75%);
+    filter: blur(12px);
+    animation: flameSweepMove var(--sweep-dur, 0.8s) ease-out forwards;
+    z-index: -1;
+}
+
+@keyframes flameSweepMove {
+    0% {
+        opacity: 1;
+        transform: translateX(var(--sweep-start, -80px));
+    }
+    70% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(var(--sweep-end, 200px));
+    }
 }
 
 /* --- Easter egg chili rain --- */
